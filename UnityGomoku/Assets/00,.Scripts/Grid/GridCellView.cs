@@ -7,8 +7,6 @@ public class GridCellView : MonoBehaviour, IPointerClickHandler
 {
     [SerializeField] private Image cellImage;
 
-    [SerializeField] private Sprite none;
-
     private GomokuBoard board;
     private int x;
     private int y;

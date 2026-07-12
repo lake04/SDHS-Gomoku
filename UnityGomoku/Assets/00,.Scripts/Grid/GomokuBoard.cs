@@ -7,17 +7,21 @@ public class GomokuBoard : MonoBehaviour
 
     private GridCell[,] grid;
     private GridCellView[,] gridView;
+    [SerializeField] private GridCellView cellPrefab;
+
+    private GameState gameState;
 
     void Start()
     {
         grid = new GridCell[width, height];
         gridView = new GridCellView[width, height];
 
-        for (int i = 0; i < width; i++)
+        for (int y = 0; y < height; y++)
         {
-            for(int j = 0; j < height; j++)
+            for (int x = 0; x < width; x++)
             {
-                gridView[i, j].Initialize(this, i, j);
+                grid[x, y] = new GridCell();
+                CreateCellView(x, y);
             }
         }
     }
@@ -27,11 +31,35 @@ public class GomokuBoard : MonoBehaviour
         
     }
 
+    private void CreateCellView(int x, int y)
+    {
+        if (cellPrefab == null)
+        {
+            return;
+        }
+
+        Transform parent = transform;
+        GridCellView cellView = Instantiate(cellPrefab, parent);
+        cellView.Initialize(this, x, y);
+        gridView[x, y] = cellView;
+    }
+
     public void Set(int x, int y)
     {
         GridCell cell = grid[x, y];
 
-        //cell.SetColor();
+        CellType cellType = CellType.None;
+        switch(gameState)
+        {
+            case GameState.Black:
+                cellType = CellType.Black;
+                break;
+            case GameState.White:
+                cellType = CellType.White;
+                break;
+        }
+
+        cell.SetColor(cellType);
 
         gridView[x, y].Refresh(cell.CurType);
     }
