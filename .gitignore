@@ -104,3 +104,14 @@ InitTestScene*.unity*
 
 # Auto-generated cache in Assets folder
 /[Aa]ssets/[Ss]ceneDependencyCache*
+
+# Unity project is stored in the UnityGomoku subdirectory
+/UnityGomoku/[Ll]ibrary/
+/UnityGomoku/[Tt]emp/
+/UnityGomoku/[Oo]bj/
+/UnityGomoku/[Bb]uild/
+/UnityGomoku/[Bb]uilds/
+/UnityGomoku/[Ll]ogs/
+/UnityGomoku/[Uu]ser[Ss]ettings/
+/UnityGomoku/[Mm]emoryCaptures/
+/UnityGomoku/[Rr]ecordings/
