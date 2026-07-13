@@ -9,7 +9,7 @@ public class GridCell
         CurType = CellType.None;
     }
 
-    public void SetColor(CellType type)
+    public void SetType(CellType type)
     {
         CurType = type;
     }
