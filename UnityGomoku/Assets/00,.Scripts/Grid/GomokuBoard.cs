@@ -1,3 +1,4 @@
+using TMPro;
 using UnityEngine;
 
 public class GomokuBoard : MonoBehaviour
@@ -10,6 +11,7 @@ public class GomokuBoard : MonoBehaviour
     [SerializeField] private GridCellView stonePrefab;
 
     private GameState gameState = GameState.Black;
+    [SerializeField] private TMP_Text gameStateText;
 
     void Start()
     {
@@ -32,7 +34,7 @@ public class GomokuBoard : MonoBehaviour
 
         CellType cellType = cell.CurType;
 
-        if(cellType != CellType.None)
+        if(cellType != CellType.None || gameState == GameState.End)
         {
             return;
         }
@@ -75,11 +77,6 @@ public class GomokuBoard : MonoBehaviour
         return true;
     }
 
-    private bool InBoard(int x, int y)
-    {
-        return x >= 0 && x < width &&  y >= 0 && y < height;
-    }
-
     private void ChangeState()
     {
         if(gameState == GameState.Black)
@@ -90,5 +87,7 @@ public class GomokuBoard : MonoBehaviour
         {
             gameState = GameState.Black;
         }
+
+        gameStateText.text = gameState.ToString();
     }
 }
