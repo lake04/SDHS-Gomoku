@@ -68,24 +68,29 @@ public class GomokuBoard : MonoBehaviour
                 break;
         }
 
+       if (cellType == CellType.Black && IsOverline(x, y))
+       {
+            Debug.Log("Overline");
+            return;
+       }
+
         cell.SetType(cellType);
+        gridView[x, y].Set(cell.CurType);
 
-        gridView[x,y].Set(cell.CurType);
-
-        if (Check(x, y, cellType))
-        {
-            Debug.Log("Game End");
-            GameEnd();
-            gameState = GameState.End;
-            return;
-        }
-
-        if(IsFullGrid())
-        {
-            GameDraw();
-            gameState = GameState.End;
-            return;
-        }
+       if (Check(x, y, cellType))
+       {
+           Debug.Log("Game End");
+           GameEnd();
+           gameState = GameState.End;
+           return;
+       }
+       
+       if(IsFullGrid())
+       {
+           GameDraw();
+           gameState = GameState.End;
+           return;
+       }
 
         ChangeState();
     }
@@ -95,6 +100,25 @@ public class GomokuBoard : MonoBehaviour
         GridCellView cellView = Instantiate(stonePrefab, transform);
         cellView.Initialize(this, x, y);
         gridView[x, y] = cellView;
+    }
+
+    private bool IsOverline(int startX, int startY)
+    {
+        foreach (Vector2Int direction in around)
+        {
+            int sequence = 1;
+
+            sequence += CountSequence(startX, startY, direction, CellType.Black);
+
+            sequence += CountSequence(startX, startY, -direction, CellType.Black);
+
+            if (sequence >= 6)
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public bool Check(int startX, int startY, CellType curType)
@@ -110,6 +134,7 @@ public class GomokuBoard : MonoBehaviour
             {
                 return true;
             }
+          
         }
 
         return false;
