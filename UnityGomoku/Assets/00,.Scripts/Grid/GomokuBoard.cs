@@ -80,6 +80,13 @@ public class GomokuBoard : MonoBehaviour
             return;
         }
 
+        if(IsFullGrid())
+        {
+            GameDraw();
+            gameState = GameState.End;
+            return;
+        }
+
         ChangeState();
     }
 
@@ -129,6 +136,22 @@ public class GomokuBoard : MonoBehaviour
         return x >= 0 && x < width && y >= 0 && y < height;
     }
 
+    private bool IsFullGrid()
+    {
+        for (int y = 0; y < height; y++)
+        {
+            for (int x = 0; x < width; x++)
+            {
+                if (grid[x,y].CurType == CellType.None)
+                {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
     private void ChangeState()
     {
         if(gameState == GameState.Black)
@@ -153,8 +176,13 @@ public class GomokuBoard : MonoBehaviour
         else if (gameState == GameState.White)
         {
             gameShowText.text = "WhiteWin";
-
         }
+        gameShowState.SetActive(true);
+    }
+
+    private void GameDraw()
+    {
+        gameShowText.text = "Draw";
         gameShowState.SetActive(true);
     }
 
@@ -170,7 +198,7 @@ public class GomokuBoard : MonoBehaviour
                 gridView[x, y].Set(CellType.None);
             }
         }
-
+        gameStateText.text = gameState.ToString();
         gameShowState.SetActive(false);
     }
 }
