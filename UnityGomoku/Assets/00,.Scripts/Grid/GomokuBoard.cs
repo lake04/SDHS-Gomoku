@@ -121,23 +121,88 @@ public class GomokuBoard : MonoBehaviour
         return false;
     }
 
+    private bool CheckRenju(int startX, int startY)
+    {
+        foreach (Vector2Int direction in around)
+        {
+            CountThree(startX, startY,direction);
+        }
+
+
+        return false;
+    }
+
+    private bool IsDoubleThree(int startX, int startY)
+    {
+        return false;
+    }
+
+    private bool IsDoubleFour(int startX, int startY)
+    {
+        return false;
+    }
+
+    private int CountThree(int startX, int startY, Vector2Int dir)
+    {
+        int count = 0;
+
+        
+        return count;
+    }
+
+    private int CountFour(int startX, int startY)
+    {
+        return 0;
+    }
+
+    private bool IsThree(int startX, int startY, Vector2Int direction)
+    {
+        return false;
+    }
+
+    private bool IsOpenFour(int startX, int startY, Vector2Int direction)
+    {
+        return false;
+    }
+
+    private int CountWinningPosition(int startX, int startY, Vector2Int direction)
+    {
+        return 0;
+    }
+
+    private bool IsFive(int startX, int startY, Vector2Int direction)
+    {
+        return CountLineSequence(startX, startY, direction, CellType.Black) == 5;
+    }
+
     public bool Check(int startX, int startY, CellType curType)
     {
-        foreach (var pos in around)
+        foreach (Vector2Int direction in around)
         {
-            int sequence = 1;
+            int sequence = CountLineSequence(startX, startY, direction, curType);
 
-            sequence += CountSequence(startX, startY, pos, curType);
-            sequence += CountSequence(startX, startY, -pos, curType);
-
-            if (sequence >= 5)
+            if (curType == CellType.Black && sequence == 5)
             {
                 return true;
             }
-          
+
+            if (curType == CellType.White && sequence >= 5)
+            {
+                return true;
+            }
         }
 
         return false;
+    }
+
+    private int CountLineSequence(int startX, int startY, Vector2Int direction, CellType curType)
+    {
+        int sequence = 1;
+
+        sequence += CountSequence(startX, startY, direction, curType);
+        sequence += CountSequence(startX, startY, -direction, curType);
+
+        return sequence;
     }
 
     private int CountSequence(int startX, int startY, Vector2Int dir, CellType curType)
@@ -175,6 +240,11 @@ public class GomokuBoard : MonoBehaviour
         }
 
         return true;
+    }
+
+    private bool TrySet()
+    {
+        return false;
     }
 
     private void ChangeState()
