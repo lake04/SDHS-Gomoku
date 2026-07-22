@@ -68,16 +68,19 @@ public class GomokuBoard : MonoBehaviour
                 break;
         }
 
-       if (cellType == CellType.Black && IsOverline(x, y))
-       {
-            Debug.Log("Overline");
-            return;
-       }
-
         cell.SetType(cellType);
-        gridView[x, y].Set(cell.CurType);
 
-       if (Check(x, y, cellType))
+        bool isWin = Check(x, y, cellType);
+
+        if (cellType == CellType.Black && !isWin && CheckRenju(x, y))
+        {
+            cell.SetType(CellType.None);
+            return;
+        }
+
+        gridView[x, y].Set(cellType);
+
+       if (isWin)
        {
            Debug.Log("Game End");
            GameEnd();
@@ -123,56 +126,131 @@ public class GomokuBoard : MonoBehaviour
 
     private bool CheckRenju(int startX, int startY)
     {
-        foreach (Vector2Int direction in around)
+        if (IsOverline(startX, startY))
         {
-            CountThree(startX, startY,direction);
+            Debug.Log("장목입니다.");
+            return true;
         }
 
+        if (IsDoubleFour(startX, startY))
+        {
+            Debug.Log("4 4 금수입니다.");
+            return true;
+        }
+
+        if (IsDoubleThree(startX, startY))
+        {
+            Debug.Log("3 3 금수입니다.");
+            return true;
+        }
 
         return false;
     }
 
     private bool IsDoubleThree(int startX, int startY)
     {
-        return false;
+        return CountThree(startX, startY) >= 2;
     }
 
     private bool IsDoubleFour(int startX, int startY)
     {
-        return false;
+        return CountFour(startX, startY) >= 2;
     }
 
-    private int CountThree(int startX, int startY, Vector2Int dir)
+    private int CountThree(int startX, int startY)
     {
-        int count = 0;
+        int threeCount = 0;
 
-        
-        return count;
+        foreach (Vector2Int dir in around)
+        {
+            if (IsThree(startX, startY, dir))
+            {
+                threeCount++;
+            }
+        }
+
+        return threeCount;
     }
-
     private int CountFour(int startX, int startY)
     {
-        return 0;
+        int fourCount = 0;
+
+        foreach (Vector2Int dir in around)
+        {
+            if (CountWinningPos(startX, startY, dir) >= 1)
+            {
+                fourCount++;
+            }
+        }
+
+        return fourCount;
     }
 
-    private bool IsThree(int startX, int startY, Vector2Int direction)
+    private bool IsThree(int startX, int startY, Vector2Int dir)
     {
+        int[] offsets = {-3, -2, -1, 0, 1, 2, 3};
+
+        foreach(int offset in offsets)
+        {
+            int x = startX + dir.x * offset;
+            int y = startY + dir.y * offset;
+
+            if (InBoard(x, y))
+            {
+                if (grid[x, y].CurType == CellType.None)
+                {
+                    grid[x, y].SetType(CellType.Black);
+
+                    if (IsOpenFour(startX, startY, dir))
+                    {
+                        grid[x, y].SetType(CellType.None);
+                        return true;
+                    }
+                    grid[x, y].SetType(CellType.None);
+                }
+            }
+        }
+
         return false;
     }
 
-    private bool IsOpenFour(int startX, int startY, Vector2Int direction)
+    private bool IsOpenFour(int startX, int startY, Vector2Int dir)
     {
-        return false;
+        return CountWinningPos(startX, startY, dir) == 2;
     }
 
-    private int CountWinningPosition(int startX, int startY, Vector2Int direction)
+    private int CountWinningPos(int startX, int startY, Vector2Int dir)
     {
-        return 0;
+        int fiveCount = 0;
+
+        int[] offset = {-4,-3,-2,-1,0,1,2,3,4};
+
+        for (int i =0; i < offset.Length;i++)
+        {
+            int x = startX + dir.x * offset[i];
+            int y = startY + dir.y * offset[i];
+
+            if (InBoard(x, y))
+            {
+                if (grid[x,y].CurType == CellType.None)
+                {
+                    grid[x, y].SetType(CellType.Black);
+
+                    if (IsFive(x, y, dir))
+                    {
+                        fiveCount++;
+                    }
+                    grid[x, y].SetType(CellType.None);
+                }
+            }
+        }
+
+        return fiveCount;
     }
 
-    private bool IsFive(int startX, int startY, Vector2Int direction)
+    private bool IsFive(int startX, int startY, Vector2Int dir)
     {
-        return CountLineSequence(startX, startY, direction, CellType.Black) == 5;
+        return CountLineSequence(startX, startY, dir, CellType.Black) == 5;
     }
 
     public bool Check(int startX, int startY, CellType curType)
@@ -195,12 +273,12 @@ public class GomokuBoard : MonoBehaviour
         return false;
     }
 
-    private int CountLineSequence(int startX, int startY, Vector2Int direction, CellType curType)
+    private int CountLineSequence(int startX, int startY, Vector2Int dir, CellType curType)
     {
         int sequence = 1;
 
-        sequence += CountSequence(startX, startY, direction, curType);
-        sequence += CountSequence(startX, startY, -direction, curType);
+        sequence += CountSequence(startX, startY, dir, curType);
+        sequence += CountSequence(startX, startY, -dir, curType);
 
         return sequence;
     }
